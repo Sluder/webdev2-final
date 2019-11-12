@@ -84,7 +84,7 @@
                                     <td>$<?= number_format($product['price'], 2) ?></td>
                                     <td>
                                         <input type="hidden" name="product_ids[]" value="<?= $product['uuid'] ?>">
-                                        <input type="number" name="quantities[]" min="1" value="<?= $product['quantity'] ?>">
+                                        <input type="number" name="quantities[]" min="1" max="<?= $product['stock'] ?>" value="<?= $product['quantity'] ?>">
                                     </td>
                                     <td>$<?= number_format($product['quantity'] * $product['price'], 2) ?></td>
                                 </tr>
