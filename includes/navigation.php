@@ -1,14 +1,14 @@
 <header>
     <p class="logo"><i class="fas fa-tv"></i>&nbsp;&nbsp;ACME</p>
     <a href="index.php" class="<?= $page === 'index' ? 'active' : '' ?>">Shop</a>
-    <a href="cart.php" class="<?= $page === 'cart' ? 'active' : '' ?>">Cart</a>
 
-    <!-- Admin navigation -->
+    <!-- Logged-in user navigation -->
     <?php if (isset($_SESSION['current_user'])) { ?>
-        <?php
-            $user = getUser($db, $_SESSION['current_user']);
-        ?>
+        <?php $user = getUser($db, $_SESSION['current_user']); ?>
 
+        <a href="cart.php" class="<?= $page === 'cart' ? 'active' : '' ?>">Cart</a>
+
+        <!-- Admin navigation -->
         <?php if ($user['is_admin']) { ?>
             <hr>
 
