@@ -1,110 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>ACME | Cart</title>
+    <?php
+        $page_title = 'Cart';
+        $description = 'View your cart and checkout';
 
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        include('includes/header.php');
 
-        <link rel="shortcut icon" href="images/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="css/normalize.css"/>
-        <link rel="stylesheet" type="text/css" href="css/main.css"/>
-        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        if (isset($_SESSION['current_user'])) {
+            if (isset($_POST['update'])) {
+                $is_success = updateCart($db, $_SESSION['current_user'], $_POST['product_ids'], $_POST['quantities']);
 
-        <?php
-            require_once('inc/open_db.php');
-            include('inc/functions.php');
-
-            if (isset($_POST['product_id']) && isset($_POST['quantity'])) {
-                updateQuantity($db, 'sluder', $_POST['product_id'], $_POST['quantity']);
-
-            } else if (isset($_POST['product_id'])) {
-                removeFromCart($db, 'sluder', $_POST['product_id']);
+            } else if (isset($_POST['delete'])) {
+                $is_success = removeFromCart($db, $_SESSION['current_user'], $_POST['delete']);
             }
 
-            $cart_products = getCart($db);
-        ?>
-    </head>
-    <body>
-        <header>
-            <p>ACME</p>
-            <a href="index.php">Home</a>
-            <a href="shop.php">Shop</a>
-            <a href="cart.php" class="active">Cart</a>
+            $cart_products = getCart($db, $_SESSION['current_user']);
+        } else {
+            $cart_products = [];
+        }
+    ?>
 
-            <a href="">Login</a>
-        </header>
+    <body>
+        <?php
+            $page = 'cart';
+            include('includes/navigation.php');
+        ?>
 
         <main>
-            <h2><i class="fa fa-shopping-cart"></i> Shopping Cart</h2>
+            <!-- Made a large form so all quantities can be update at once -->
+            <form action="cart.php" method="post">
+                <h3>
+                    <i class="fa fa-shopping-cart fa-sm"></i> Shopping Cart
 
-            <?php if (isset($_POST['product_id']) && isset($_POST['quantity'])) { ?>
-                <p class="message">Successfully updated your cart</p>
-
-            <?php } else if (isset($_POST['product_id'])) { ?>
-                <p class="message">Successfully removed <i><?= $_POST['product_name'] ?></i> from cart</p>
-            <?php } ?>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Image</th>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php $cart_total = 0; ?>
-                    <?php if (empty($cart_products)) { ?>
-                        <tr class="empty">
-                            <td colspan="6">You have no items in your cart</td>
-                        </tr>
-                    <?php } else { ?>
-                        <?php foreach ($cart_products as $product) { ?>
-                            <?php $cart_total += $product['quantity'] * $product['price']; ?>
-                            <tr>
-                                <td>
-                                    <form action="cart.php" method="post">
-                                        <input type="hidden" name="product_id" value="<?= $product['uuid'] ?>">
-                                        <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
-
-                                        <button class="fa-btn">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <img src="img/<?= $product['uuid'] ?>.png" alt="<?= $product['name'] ?>">
-                                </td>
-                                <td>
-                                    <?= $product['manufacturer'] ?> - <?= $product['name'] ?> (<?= $product['tv_width'] ?> x <?= $product['tv_height'] ?> x <?= $product['tv_depth'] ?>)
-                                </td>
-                                <td>$<?= number_format($product['price'], 2) ?></td>
-                                <td>
-                                    <form action="cart.php" method="post">
-                                        <input type="hidden" name="product_id" value="<?= $product['uuid'] ?>">
-                                        <input type="number" name="quantity" min="1" value="<?= $product['quantity'] ?>">
-
-                                        <button class="fa-btn">
-                                            <i class="fa fa-save"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                                <td>$<?= number_format($product['quantity'] * $product['price'], 2) ?></td>
-                            </tr>
-                        <?php } ?>
+                    <?php if (!empty($cart_products)) { ?>
+                        <button type="submit" name="update">
+                            Update Cart
+                        </button>
                     <?php } ?>
-                </tbody>
-            </table>
+                </h3>
+
+                <!-- Handle messages -->
+                <?php if (isset($_POST['update']) || isset($_POST['delete'])) { ?>
+                    <?php if ($is_success) { ?>
+                        <p class="message success">Successfully updated your cart</p>
+                    <?php } else { ?>
+                        <p class="message fail"><i>Cart was unable to be updated</p>
+                    <?php } ?>
+                <?php } ?>
+
+                <!-- Cart items list -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Image</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $cart_total = 0; ?>
+                        <?php if (empty($cart_products)) { ?>
+                            <tr class="empty">
+                                <td colspan="6">You have no items in your cart</td>
+                            </tr>
+                        <?php } else { ?>
+                            <?php foreach ($cart_products as $product) { ?>
+                                <?php $cart_total += $product['quantity'] * $product['price']; ?>
+                                <tr>
+                                    <td>
+                                        <button class="fa-btn" type="submit" name="delete" value="<?= $product['uuid'] ?>">
+                                            <i class="fa fa-trash fa-lg"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <img src="img/<?= $product['uuid'] ?>.png" alt="<?= $product['tv_name'] ?>">
+                                    </td>
+                                    <td>
+                                        <?= $product['screen_size'] ?>" <?= $product['tv_name'] ?> (<?= $product['tv_width'] ?>" x <?= $product['tv_height'] ?>" x <?= $product['tv_depth'] ?>")
+                                    </td>
+                                    <td>$<?= number_format($product['price'], 2) ?></td>
+                                    <td>
+                                        <input type="hidden" name="product_ids[]" value="<?= $product['uuid'] ?>">
+                                        <input type="number" name="quantities[]" min="1" value="<?= $product['quantity'] ?>">
+                                    </td>
+                                    <td>$<?= number_format($product['quantity'] * $product['price'], 2) ?></td>
+                                </tr>
+                            <?php } ?>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
 
             <p class="cart-total"><b>Cart Total : $<?= number_format($cart_total, 2) ?></b></p>
+
+            <!-- Shipping information -->
+            <h3><i class="fa fa-truck fa-sm"></i> Shipping</h3>
         </main>
 
-        <footer>
-            Zachary Sluder – CS3800 Assignment #3 - Fall 2019
-        </footer>
+        <?php
+            include('includes/footer.php');
+        ?>
     </body>
 </html>

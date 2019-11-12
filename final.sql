@@ -30,8 +30,7 @@ CREATE TABLE user_information (
 
 CREATE TABLE products (
   uuid int(5) NOT NULL,
-  name varchar(255) NOT NULL,
-  product_type varchar(255) NOT NULL,
+  tv_name varchar(255) NOT NULL,
   manufacturer varchar(255) NOT NULL,
   price DECIMAL NOT NULL,
   screen_size DECIMAL NOT NULL,
@@ -39,8 +38,10 @@ CREATE TABLE products (
   tv_height DECIMAL NOT NULL,
   tv_depth DECIMAL NOT NULL,
   stock int(5) NOT NULL,
+  is_deleted boolean DEFAULT 0,
   PRIMARY KEY (uuid)
 );
+
 CREATE TABLE orders (
   order_id int(5) NOT NULL,
   username varchar(255) NOT NULL,
@@ -66,13 +67,3 @@ CREATE TABLE cart (
   CONSTRAINT FOREIGN KEY (username) references users (username),
   CONSTRAINT FOREIGN KEY (product_id) references products (uuid)
 );
-
-
-
--- Test data
-INSERT INTO users (username, user_password, is_admin) VALUES ('sluder', 'password', 1);
-INSERT INTO products (uuid, name, product_type, manufacturer, price, screen_size, tv_width, tv_height, tv_depth, stock) VALUES ('12345', 'Samsung HD', 'TV', 'Samsung', 80.00, 50, 60, 70, 5, 10);
-INSERT INTO products (uuid, name, product_type, manufacturer, price, screen_size, tv_width, tv_height, tv_depth, stock) VALUES ('54321', 'Samsung FHD', 'TV', 'Samsung', 1100.00, 70, 800, 50, 5, 11);
-
-
-INSERT INTO cart (username, product_id, quantity) VALUES ('sluder', '12345', 1);

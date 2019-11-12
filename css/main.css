@@ -1,73 +1,3 @@
-main {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: left;
-    padding-left: 20%;
-    padding-right: 20%;
-}
-
-header, footer {
-    background: #414141;
-    color: white;
-    height: 45px;
-    text-align: center;
-}
-
-header {
-    display: flex;
-    padding-left: 20%;
-    padding-right: 20%;
-}
-
-header > a {
-    float: left;
-    color: white;
-    text-align: center;
-    padding: 15px 16px;
-    text-decoration: none;
-    font-size: 17px;
-}
-
-h2 {
-    width: 100%;
-}
-
-h2 > i {
-    color: #737373;
-}
-
-a.active {
-    border-bottom: 5px solid #1effbe;
-}
-
-figure {
-    font-size: 15px;
-}
-
-figure > img {
-    width: 150px
-}
-
-figure > h4 {
-    margin-top: 5px;
-    max-width: 130px;
-}
-
-figcaption > p {
-    margin: 0;
-}
-
-.message {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-    border-radius: 6px;
-    color: #155724;
-    padding: 15px 20px;
-    margin: 0 0 15px;
-    width: 100%;
-}
-
 button {
     border: none;
     border-radius: 4px;
@@ -78,6 +8,7 @@ button {
     text-align: center;
     outline: none;
     padding: 5px 10px;
+    min-width: 65px;
 }
 
 button:hover {
@@ -94,7 +25,135 @@ button:hover {
 
 .fa-btn > i {
     color: #414141;
-    font-size: 25px;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: left;
+    padding-left: 20%;
+    padding-right: 20%;
+    margin-bottom: 30px;
+}
+
+header, footer {
+    background: #414141;
+    color: white;
+    height: 45px;
+    text-align: center;
+}
+
+header {
+    display: flex;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+header > hr {
+    background: #737373;
+    border: none;
+    height: 27px;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 1px;
+}
+
+header > a {
+    float: left;
+    color: white;
+    text-align: center;
+    padding: 13px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+header > section {
+    display: flex;
+    justify-content: flex-end;
+    text-align: end;
+    width: 100%;
+}
+
+header > section > form {
+    width: 9%;
+}
+
+header > section > form > button {
+    background: #fff;
+    color: #414141;
+    margin-top: 10px;
+}
+
+header .dropdown {
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+h3 {
+    width: 100%;
+}
+
+h3 > i {
+    color: #737373;
+}
+
+h3 > button {
+    float: right;
+}
+
+a.active {
+    border-bottom: 5px solid #1effbe;
+}
+
+.logo {
+    text-align: left;
+    width: 15%;
+}
+
+figure {
+    font-size: 15px;
+    margin: 0 48px 30px 0;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 5px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+figure:hover {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    cursor: pointer;
+}
+
+figure > img {
+    width: 150px
+}
+
+figcaption > p {
+    margin: 3px;
+}
+
+figcaption > form > button {
+    float: right;
+}
+
+.message {
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin: 0 0 15px;
+    width: 100%;
+}
+
+.success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.fail {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
 }
 
 table {
@@ -105,7 +164,7 @@ table {
 
 th {
     border-bottom: 1px solid lightgrey;
-    padding: 9px 2px;
+    padding: 9px 7px;
     text-align: left;
 }
 
@@ -115,13 +174,76 @@ tr.empty {
 
 td {
     border-bottom: 1px solid lightgrey;
-    padding: 7px 0;
+    padding: 7px 7px;
 }
 
 td > img {
     max-width: 50px;
 }
 
+form {
+    width: 100%;
+}
+
+.form-table td {
+    padding-left: 0;
+    padding-right: 50px;
+}
+
+.form-table, .form-table td {
+    border: none;
+}
+
+.form-table input {
+    width: 100%;
+}
+
+label {
+    font-weight: bold;
+}
+
+input {
+    border-radius: 4px;
+    border: 1px solid lightgrey;
+    height: 22px;
+    padding-left: 6px;
+}
+
+input[type=file] {
+    border: none;
+}
+
 .cart-total {
     margin-left: auto;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 100px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+}
+
+.dropdown a {
+    color: #414141;
+    display: block;
+    text-align: left;
+    text-decoration: none;
+    padding: 4px;
+}
+
+.dropdown a i {
+    color: #737373;
+    padding-right: 5px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }

@@ -1,50 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>ACME | Home</title>
+    <?php
+        $page_title = 'Shop';
+        $description = 'Shop ACME\'s latest products';
 
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        include('includes/header.php');
 
-        <link rel="shortcut icon" href="images/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="css/normalize.css"/>
-        <link rel="stylesheet" type="text/css" href="css/main.css"/>
+        $products = getProducts($db);
 
-        <?php
-            require_once('inc/open_db.php');
-            include('inc/functions.php');
+        if (isset($_POST['product_id'])) {
+            if (isset($_SESSION['current_user'])) {
+                $is_success = addToCart($db, $_SESSION['current_user'], $_POST['product_id']);
+            }
+        }
+    ?>
 
-            $products = getProducts($db);
-        ?>
-    </head>
     <body>
-        <header>
-            <a href="index.php" class="active">Home</a>
-            <a href="shop.php">Shop</a>
-            <a href="cart.php">Cart</a>
-        </header>
+        <?php
+            $page = 'index';
+            include('includes/navigation.php');
+        ?>
 
         <main>
+            <h3><i class="fa fa-tags fa-sm"></i> Shop</h3>
+
+            <!-- Handle messages -->
+            <?php if (isset($_POST['product_id'])) { ?>
+                <?php if (!isset($_SESSION['current_user'])) { ?>
+                    <p class="message fail">You must be logged in to add items to your cart</p>
+
+                <?php } else if ($is_success) { ?>
+                    <p class="message success">Successfully added <i><?= $_POST['product_name'] ?></i> to cart</p>
+
+                <?php } else { ?>
+                    <p class="message fail"><i><?= $_POST['product_name'] ?></i> was unable to be added to cart</p>
+                <?php } ?>
+            <?php } ?>
+
+            <!-- Product list -->
             <?php foreach ($products as $product) { ?>
                 <figure>
-                    <img src="img/<?= $product['uuid'] ?>.png" alt="<?= $product['name'] ?>">
-                    <h4><?= $product['name'] ?></h4>
-
+                    <img src="img/<?= $product['uuid'] ?>.png" alt="<?= $product['tv_name'] ?>">
                     <figcaption>
-                        <p>$<?= number_format($product['price'], 2) ?></p>
+                        <p><b><?= $product['screen_size'] ?>" <?= $product['tv_name'] ?></b></p>
+                        <p><?= $product['tv_width'] ?>" x <?= $product['tv_height'] ?>" x <?= $product['tv_depth'] ?>"</p>
+                        <p><b>$<?= number_format($product['price'], 2) ?></b></p>
 
-<!--                        <form action="index.php" method="post">-->
-<!--                            <input type="hidden" name="isbn" value="--><?//= $isbn ?><!--">-->
-<!---->
-<!--                            <button>Add to cart</button>-->
-<!--                        </form>-->
+                        <form action="index.php" method="post">
+                            <input type="hidden" name="product_id" value="<?= $product['uuid'] ?>">
+                            <input type="hidden" name="product_name" value="<?= $product['tv_name'] ?>">
+
+                            <button>Add to cart</button>
+                        </form>
                     </figcaption>
                 </figure>
             <?php } ?>
         </main>
 
-        <footer>
-            Zachary Sluder – CS3800 Assignment #3 - Fall 2019
-        </footer>
+        <?php
+            include('includes/footer.php');
+        ?>
     </body>
 </html>     
