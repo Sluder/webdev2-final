@@ -50,10 +50,10 @@ if ($_SESSION['type'] == 'existing') {
         if (verify_login($db, $username, $password)) {
             $_SESSION['message'] = 'You have successfully logged in';
             $_SESSION['current_user'] = $_POST['username'];
-            header('Location: login_message.php');
+            header('Location: ../index.php');
         } else {
             $_SESSION['message'] = 'Login failed';
-            header('Location: login_message.php');
+            header('Location: ../index.php');
         }
     }
 } else {  //create new user
@@ -73,7 +73,7 @@ if ($_SESSION['type'] == 'existing') {
                     if (addUser($db, $username, $encrypt_password)) {
                         $_SESSION['message'] = 'Your account has been created and you are logged in';
                         $_SESSION['current_user'] = $_POST['username'];
-                        header('Location: login_message.php');
+                        header('Location: ../index.php');
                     } else {
                         echo "<script type='text/javascript'>alert('Unable to create account.');</script>";
                     }

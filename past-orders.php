@@ -49,9 +49,10 @@
                 <?php foreach ($orders as $order_products) { ?>
                     <table class="order-table">
                         <tr>
-                            <th colspan="4"><?= date("M d, Y g:i a", strtotime($order_products[0]['date_time'])) ?></th>
+                            <th colspan="5"><?= date("M d, Y g:i a", strtotime($order_products[0]['date_time'])) ?></th>
                         </tr>
                         <tr>
+                            <th></th>
                             <th>Product Name</th>
                             <th>Dimensions</th>
                             <th>Quantity</th>
@@ -62,6 +63,9 @@
                         <?php $order_total = 0; ?>
                         <?php foreach ($order_products as $product) { ?>
                             <tr>
+                                <td>
+                                    <img src="img/<?= $product['uuid'] ?>.png" alt="<?= $product['tv_name'] ?>">
+                                </td>
                                 <td><?= $product['screen_size'] ?>" <?= $product['tv_name'] ?></td>
                                 <td><?= $product['tv_width'] ?>" x <?= $product['tv_height'] ?>" x <?= $product['tv_depth'] ?>"</td>
                                 <td><?= $product['quantity']?></td>

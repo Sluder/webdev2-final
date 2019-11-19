@@ -356,15 +356,21 @@ function placeOrder($db, $username, $promo_code)
         $statement->bindValue(':product_id', $product['uuid']);
         $statement->bindValue(':quantity', $product['quantity']);
 
-        // Remove order if there was an issue
         $new_stock = $product['stock'] - $product['quantity'];
 
+        // Check if query ran successfully & there is enough stock for this order
         if (!$statement->execute() || $new_stock < 0) {
             deleteOrder($db, $order_id);
 
             return [
                 'success' => false,
                 'message' => "'{$product['tv_name']}' only has {$product['stock']} in stock for ordering"
+            ];
+        // Checks if an admin has deleted this product while in this cart
+        } else if ($product['is_deleted']) {
+            return [
+                'success' => false,
+                'message' => "'{$product['tv_name']}' has been removed for ordering"
             ];
         } else {
             $statement = $db->prepare("UPDATE products SET stock = :stock WHERE uuid = :product_id");
