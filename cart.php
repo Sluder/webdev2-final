@@ -8,15 +8,21 @@
 
         if (isset($_SESSION['current_user'])) {
             if (isset($_POST['update'])) {
-                $is_success = updateCart($db, $_SESSION['current_user'], $_POST['product_ids'], $_POST['quantities']);
+                $response = updateCart($db, $_SESSION['current_user'], $_POST['product_ids'], $_POST['quantities']);
 
             } else if (isset($_POST['delete'])) {
-                $is_success = removeFromCart($db, $_SESSION['current_user'], $_POST['delete']);
+                $response = removeFromCart($db, $_SESSION['current_user'], $_POST['delete']);
+
+            } else if (isset($_POST['apply-promo'])) {
+                $response = applyPromo($db, $_POST['promo-code']);
+
+            } else if (isset($_POST['complete-order'])) {
+                $response = placeOrder($db, $_SESSION['current_user'], $_POST['promo-code']);
             }
 
             $cart_products = getCart($db, $_SESSION['current_user']);
-        } else {
-            $cart_products = [];
+
+            $user_information = getUserInformation($db, $_SESSION['current_user']);
         }
     ?>
 
@@ -24,6 +30,11 @@
         <?php
             $page = 'cart';
             include('includes/navigation.php');
+
+            // Redirect to user if this page is not allowed to be accessed
+            if (!isset($_SESSION['current_user'])) {
+                header("Location: index.php");
+            }
         ?>
 
         <main>
@@ -40,12 +51,8 @@
                 </h3>
 
                 <!-- Handle messages -->
-                <?php if (isset($_POST['update']) || isset($_POST['delete'])) { ?>
-                    <?php if ($is_success) { ?>
-                        <p class="message success">Successfully updated your cart</p>
-                    <?php } else { ?>
-                        <p class="message fail"><i>Cart was unable to be updated</p>
-                    <?php } ?>
+                <?php if (isset($response)) { ?>
+                    <p class="message <?= $response['success'] ? 'success' : 'fail' ?>"><?= $response['message'] ?></p>
                 <?php } ?>
 
                 <!-- Cart items list -->
@@ -67,6 +74,7 @@
                                 <td colspan="6">You have no items in your cart</td>
                             </tr>
                         <?php } else { ?>
+                            <!-- List all products in logged-in users cart -->
                             <?php foreach ($cart_products as $product) { ?>
                                 <?php $cart_total += $product['quantity'] * $product['price']; ?>
                                 <tr>
@@ -94,10 +102,53 @@
                 </table>
             </form>
 
-            <p class="cart-total"><b>Cart Total : $<?= number_format($cart_total, 2) ?></b></p>
+            <p class="total"><b>Cart Total : $<?= number_format($cart_total, 2) ?></b></p>
 
-            <!-- Shipping information -->
-            <h3><i class="fa fa-truck fa-sm"></i> Shipping</h3>
+            <!-- Show details of the cart -->
+            <?php if (!empty($cart_products)) { ?>
+                <h3><i class="fas fa-cash-register fa-sm"></i> Complete Order</h3>
+
+                <table class="shipping-table half-table">
+                    <tr>
+                        <td><b>Subtotal</b></td>
+                        <td>$<?= number_format($cart_total, 2) ?></td>
+                    </tr>
+                    <tr>
+                        <td><b>Shipping</b></td>
+                        <td>Free One-day</td>
+                    </tr>
+                    <tr>
+                        <td><b>Shipping Address</b></td>
+                        <td><?= $user_information['shipping_street'] ?>, <?= $user_information['shipping_city'] ?>, <?= $user_information['shipping_zipcode'] ?></td>
+                    </tr>
+                    <tr>
+                        <td><b>Promo Code</b></td>
+                        <td>
+                            <form action="cart.php" method="post">
+                                <input type="text" name="promo-code" value="<?= isset($_POST['promo-code']) ? $_POST['promo-code'] : '' ?>">
+                                <button type="submit" name="apply-promo">Apply</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Order Total</b></td>
+                        <?php $has_promo = (isset($response['percent_off']) && $response['percent_off'] !== 0); ?>
+                        <td>
+                            $<?= number_format($cart_total - ($has_promo ? ($response['percent_off'] / 100) : 0) * $cart_total, 2) ?>
+                            <?= $has_promo ? "({$response['percent_off']}% off)" : '' ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Checkout</b></td>
+                        <td>
+                            <form action="cart.php" method="post">
+                                <input type="hidden" name="promo-code" value="<?= isset($_POST['promo-code']) ? $_POST['promo-code'] : '' ?>">
+                                <button type="submit" name="complete-order">Submit Order</button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            <?php } ?>
         </main>
 
         <?php

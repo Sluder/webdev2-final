@@ -10,9 +10,17 @@
 
         if (isset($_POST['product_id'])) {
             if (isset($_SESSION['current_user'])) {
-                $is_success = addToCart($db, $_SESSION['current_user'], $_POST['product_id']);
+                $response = addToCart($db, $_SESSION['current_user'], $_POST['product_id']);
+
+            } else {
+                $response = [
+                    'success' => false,
+                    'message' => 'You need to be logged in to add products to your cart'
+                ];
             }
         }
+
+        $most_ordered = getMostOrderedProduct($db)['product_id'];
     ?>
 
     <body>
@@ -25,16 +33,8 @@
             <h3><i class="fa fa-tags fa-sm"></i> Shop</h3>
 
             <!-- Handle messages -->
-            <?php if (isset($_POST['product_id'])) { ?>
-                <?php if (!isset($_SESSION['current_user'])) { ?>
-                    <p class="message fail">You must be logged in to add items to your cart</p>
-
-                <?php } else if ($is_success) { ?>
-                    <p class="message success">Successfully added <i><?= $_POST['product_name'] ?></i> to cart</p>
-
-                <?php } else { ?>
-                    <p class="message fail"><i><?= $_POST['product_name'] ?></i> was unable to be added to cart</p>
-                <?php } ?>
+            <?php if (isset($response)) { ?>
+                <p class="message <?= $response['success'] ? 'success' : 'fail' ?>"><?= $response['message'] ?></p>
             <?php } ?>
 
             <!-- Product list -->
@@ -42,6 +42,10 @@
                 <figure>
                     <img src="img/<?= $product['uuid'] ?>.png" alt="<?= $product['tv_name'] ?>">
                     <figcaption>
+                        <?php if (isset($most_ordered) && $product['uuid'] === $most_ordered) { ?>
+                            <p class="most-popular"><i class="fas fa-fire"></i> Most Popular</p>
+                        <?php } ?>
+
                         <p><b><?= $product['screen_size'] ?>" <?= $product['tv_name'] ?></b></p>
                         <p><?= $product['tv_width'] ?>" x <?= $product['tv_height'] ?>" x <?= $product['tv_depth'] ?>"</p>
                         <p><b>$<?= number_format($product['price'], 2) ?></b></p>

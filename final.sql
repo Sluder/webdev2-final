@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS order_products;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS promo_codes;
 
 -- Create all tables
 CREATE TABLE users (
@@ -42,9 +43,17 @@ CREATE TABLE products (
   PRIMARY KEY (uuid)
 );
 
+CREATE TABLE promo_codes (
+  code varchar(255) NOT NULL,
+  percent_off integer NOT NULL,
+  is_deleted boolean DEFAULT 0,
+  PRIMARY KEY (code)
+);
+
 CREATE TABLE orders (
   order_id int(5) NOT NULL,
   username varchar(255) NOT NULL,
+  promo_code varchar(255) NULL,
   date_time DATETIME NOT NULL,
   PRIMARY KEY (order_id),
   CONSTRAINT FOREIGN KEY (username) references users (username)

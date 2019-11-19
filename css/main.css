@@ -55,7 +55,7 @@ header > hr {
     border: none;
     height: 27px;
     margin-left: 10px;
-    margin-right: 10px;
+    margin-right: 15px;
     width: 1px;
 }
 
@@ -116,7 +116,6 @@ figure {
     margin: 0 48px 30px 0;
     padding: 15px;
     border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 5px rgba(0,0,0,0.24);
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
 
@@ -133,6 +132,10 @@ figcaption > p {
     margin: 3px;
 }
 
+figcaption .most-popular {
+    color: red;
+}
+
 figcaption > form > button {
     float: right;
 }
@@ -141,7 +144,7 @@ figcaption > form > button {
     border-radius: 6px;
     padding: 15px 20px;
     margin: 0 0 15px;
-    width: 100%;
+    width: 97%;
 }
 
 .success {
@@ -185,17 +188,33 @@ form {
     width: 100%;
 }
 
-.form-table td {
-    padding-left: 0;
-    padding-right: 50px;
+.clear-table {
+    margin-bottom: 15px;
 }
 
-.form-table, .form-table td {
+.clear-table > tr > td {
+    padding-right: 25px;
+    padding-left: 25px;
+}
+
+.clear-table, .clear-table td {
     border: none;
 }
 
-.form-table input {
-    width: 100%;
+.clear-table input {
+    width: 98%;
+}
+
+.half-table {
+    margin-right: 50%;
+}
+
+.shipping-table td {
+    border: none;
+}
+
+.order-table {
+    margin-top: 20px;
 }
 
 label {
@@ -213,7 +232,7 @@ input[type=file] {
     border: none;
 }
 
-.cart-total {
+.total {
     margin-left: auto;
 }
 .dropdown {
